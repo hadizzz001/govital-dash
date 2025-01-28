@@ -1,15 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react'; 
-import { redirect, useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { redirect } from 'next/navigation';
 
 const ManageCategory = () => {
-  const [formData, setFormData] = useState({ name: ''   });
-  const [editFormData, setEditFormData] = useState({ id: '', name: ''  });
+  const [formData, setFormData] = useState({ name: '', brand: '' });
+  const [editFormData, setEditFormData] = useState({ id: '', name: '', brand: '' });
   const [message, setMessage] = useState('');
-  const [categories, setCategories] = useState([]); 
+  const [categories, setCategories] = useState([]);
+  const [brands, setBrands] = useState([]);
   const [editMode, setEditMode] = useState(false);
- 
+
   const fetchCategories = async () => {
     try {
       const res = await fetch('/api/subbrand', { method: 'GET' });
@@ -24,13 +25,31 @@ const ManageCategory = () => {
     }
   };
 
+  const fetchBrands = async () => {
+    try {
+      const res = await fetch('/api/brand', { method: 'GET' });
+      if (res.ok) {
+        const data = await res.json();
+        setBrands(data);
+      } else {
+        console.error('Failed to fetch brands');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
   useEffect(() => {
     fetchCategories();
+    fetchBrands();
   }, []);
 
   // Add category
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    console.log("formdata: ",formData);
+    
 
     const res = await fetch('/api/subbrand', {
       method: 'POST',
@@ -39,11 +58,10 @@ const ManageCategory = () => {
     });
 
     if (res.ok) {
-      setMessage('sub brand added successfully!');
-      setFormData({ name: '' });
+      setMessage('Sub-brand added successfully!');
+      setFormData({ name: '', brand: '' });
       fetchCategories();
-      window.location.href = '/sub';
-      
+      // window.location.href = '/sub';
     } else {
       const errorData = await res.json();
       setMessage(`Error: ${errorData.error}`);
@@ -55,8 +73,9 @@ const ManageCategory = () => {
     setEditMode(true);
     setEditFormData({
       id: category.id,
-      name: category.name,  
-    }); 
+      name: category.name,
+      brand: category.brand,
+    });
   };
 
   const handleEditSubmit = async (e) => {
@@ -67,25 +86,23 @@ const ManageCategory = () => {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: editFormData.name,  
+          name: editFormData.name,
+          brand: editFormData.brand,
         }),
       });
 
       if (res.ok) {
-        window.location.reload(); 
-        setEditFormData({ id: '', name: ''   });
+        setMessage('Sub-brand updated successfully!');
+        setEditFormData({ id: '', name: '', brand: '' });
         setEditMode(false);
         fetchCategories();
-        
       } else {
-        window.location.reload();
         const errorData = await res.json();
-        setMessage(`Error: ${errorData.error}`); 
+        setMessage(`Error: ${errorData.error}`);
       }
     } catch (error) {
-      window.location.reload();
       console.error('Error:', error);
-      setMessage('An error occurred while updating the category.'); 
+      setMessage('An error occurred while updating the category.');
     }
   };
 
@@ -97,7 +114,7 @@ const ManageCategory = () => {
           method: 'DELETE',
         });
         if (res.ok) {
-          setMessage('sub brand deleted successfully!');
+          setMessage('Sub-brand deleted successfully!');
           fetchCategories();
           redirect('/sub');
         } else {
@@ -110,12 +127,9 @@ const ManageCategory = () => {
     }
   };
 
- 
- 
-
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">{editMode ? 'Edit sub brand' : 'Add sub brand'}</h1>
+      <h1 className="text-2xl font-bold mb-4">{editMode ? 'Edit Sub-brand' : 'Add Sub-brand'}</h1>
       <form onSubmit={editMode ? handleEditSubmit : handleSubmit} className="space-y-4">
         <div>
           <label className="block mb-1">Name</label>
@@ -131,19 +145,41 @@ const ManageCategory = () => {
             required
           />
         </div>
-       
-        
+
+        <div>
+          <label className="block mb-1">Brand</label>
+          <select
+            className="border p-2 w-full"
+            value={editMode ? editFormData.brand : formData.brand}
+            onChange={(e) =>
+              editMode
+                ? setEditFormData({ ...editFormData, brand: e.target.value })
+                : setFormData({ ...formData, brand: e.target.value })
+            }
+            required
+          >
+            <option value="" disabled>Select a brand</option>
+            {brands.map((brand) => (
+              <option key={brand.id} value={brand.name}>
+                {brand.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <button type="submit" className="bg-blue-500 text-white px-4 py-2">
-          {editMode ? 'Update Category' : 'Add sub brand'}
+          {editMode ? 'Update Sub-brand' : 'Add Sub-brand'}
         </button>
       </form>
+
       {message && <p className="mt-4">{message}</p>}
 
       <h2 className="text-xl font-bold mt-8">All Categories</h2>
       <table className="table-auto border-collapse border border-gray-300 w-full mt-4">
         <thead>
           <tr>
-            <th className="border border-gray-300 p-2">Name</th> 
+            <th className="border border-gray-300 p-2">Name</th>
+            <th className="border border-gray-300 p-2">Brand</th>
             <th className="border border-gray-300 p-2">Actions</th>
           </tr>
         </thead>
@@ -151,7 +187,8 @@ const ManageCategory = () => {
           {categories.length > 0 ? (
             categories.map((category) => (
               <tr key={category.id}>
-                <td className="border border-gray-300 p-2">{category.name}</td> 
+                <td className="border border-gray-300 p-2">{category.name}</td>
+                <td className="border border-gray-300 p-2">{category.brand}</td>
                 <td className="border border-gray-300 p-2 text-center">
                   <button
                     onClick={() => handleEdit(category)}
@@ -170,19 +207,13 @@ const ManageCategory = () => {
             ))
           ) : (
             <tr>
-              <td  className="border border-gray-300 p-2 text-center">
-                No sub brands found.
+              <td className="border border-gray-300 p-2 text-center" colSpan="3">
+                No sub-brands found.
               </td>
             </tr>
           )}
         </tbody>
       </table>
-      <style
-          dangerouslySetInnerHTML={{
-            __html:
-              "\n  .uploadcare--widget {\n    background:black;\n  }\n  ",
-          }}
-        />
     </div>
   );
 };

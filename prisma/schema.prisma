@@ -26,12 +26,13 @@ model Category {
 model Brand {
   id   String   @id @default(auto()) @map("_id") @db.ObjectId
   name String   @unique
-  img  String[]
+  img  String[] 
 }
 
 model Subbrand {
   id   String   @id @default(auto()) @map("_id") @db.ObjectId
   name String   @unique 
+  brand String
 }
 
 model Order {

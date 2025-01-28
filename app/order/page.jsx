@@ -33,14 +33,7 @@ const page = () => {
 
 
 
-    const handleShowMore = (index) => {
-        setShowDetails((prevShowDetails) => {
-            const updatedShowDetails = [...prevShowDetails];
-            updatedShowDetails[index] = !updatedShowDetails[index];
-            return updatedShowDetails;
-        });
-    };
-
+ 
 
 
     // const calculateFinalTotal = () => {
@@ -58,25 +51,25 @@ const page = () => {
 
 
 
-    const calculateFinalTotal = () => {
-        if (allTemp1 && allTemp1.cartItems) {
-            const result = allTemp1.cartItems.reduce(
-                (acc, post) => {
-                    const price =  post.price;
-                    const qty = post.quantity;
-                    acc.totalPrice += isNaN(price) || isNaN(qty) ? 0 : price * qty;
-                    acc.totalItems += isNaN(qty) ? 0 : qty;
-                    return acc;
-                },
-                { totalPrice: 0, totalItems: 0 }
-            );
+    // const calculateFinalTotal = () => {
+    //     if (allTemp1 && allTemp1.cartItems) {
+    //         const result = allTemp1.cartItems.reduce(
+    //             (acc, post) => {
+    //                 const price =  post.price;
+    //                 const qty = post.quantity;
+    //                 acc.totalPrice += isNaN(price) || isNaN(qty) ? 0 : price * qty;
+    //                 acc.totalItems += isNaN(qty) ? 0 : qty;
+    //                 return acc;
+    //             },
+    //             { totalPrice: 0, totalItems: 0 }
+    //         );
 
-            return result;
-        }
+    //         return result;
+    //     }
 
-        return { totalPrice: 0, totalItems: 0 };
-    };
-    const finalTotal = calculateFinalTotal();
+    //     return { totalPrice: 0, totalItems: 0 };
+    // };
+    // const finalTotal = calculateFinalTotal();
 
 
 
@@ -100,10 +93,8 @@ const page = () => {
                                 <table className="w-full">
                                     <thead>
                                         <tr>
-                                            <th className="text-left font-semibold">Product</th>
-                                            <th className="text-left font-semibold">Price</th>
-                                            <th className="text-left font-semibold">Quantity</th>
-                                            <th className="text-left font-semibold">Total</th> 
+                                            <th className="text-left font-semibold">Product</th> 
+                                            <th className="text-left font-semibold">Quantity</th> 
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -116,14 +107,7 @@ const page = () => {
                                                             <div className="flex items-center"> 
                                                                 <span className="font-semibold">{temp.title}</span>
                                                             </div>
-                                                        </td>
-                                                        <td className="py-4">${temp.price}</td>
-                                                        <td className="py-4">
-                                                            <div className="flex items-center">
-                                                                <span className="text-center w-8">{temp.quantity}</span>
-                                                            </div>
-                                                        </td>
-                                                        <td className="py-4">${temp.quantity * +temp.price}</td>
+                                                        </td> 
 
                                                         
 
@@ -169,11 +153,7 @@ const page = () => {
                                         <div className="flex justify-between mb-2">
                                             <span className="font-semibold">Total Items</span>
                                             <span className="font-semibold">{finalTotal.totalItems}</span>
-                                        </div> 
-                                        <div className="flex justify-between mb-2">
-                                            <span className="font-semibold">Total Amount</span>
-                                            <span className="font-semibold">${(finalTotal.totalPrice)}</span>
-                                        </div>
+                                        </div>  
                                     </>
                                 ) : (
                                     <div className='home___error-container'>
