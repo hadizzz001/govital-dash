@@ -1,8 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Dropzone from '../components/Dropzone';
+import { useState, useEffect } from 'react'; 
 import { redirect, useRouter } from 'next/navigation';
+import Upload from '../components/Upload';
+
+
 
 const ManageCategory = () => {
   const [formData, setFormData] = useState({ name: '' , img: [] });
@@ -147,7 +149,7 @@ const ManageCategory = () => {
           />
         </div>
        
-        <Dropzone HandleImagesChange={handleImgChange} />
+        <Upload onImagesUpload={handleImgChange} />
         <button type="submit" className="bg-blue-500 text-white px-4 py-2">
           {editMode ? 'Update Category' : 'Add Brand'}
         </button>

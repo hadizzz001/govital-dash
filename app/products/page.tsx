@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import 'react-quill/dist/quill.snow.css';
-import Dropzone from '../components/Dropzone';
+import 'react-quill/dist/quill.snow.css'; 
+import Upload from '../components/Upload';
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
@@ -202,7 +202,9 @@ else {
             "\n  .uploadcare--widget {\n    background:black;\n  }\n  "
         }}
       />
-      <Dropzone HandleImagesChange={handleImgChange} /> 
+     
+
+<Upload onImagesUpload={handleImgChange} />
 
 <div className='mt-20'></div>
 
